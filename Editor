@@ -1,0 +1,40 @@
+#include<stdio.h>
+#include<unistd.h>
+#include<termios.h>
+#include<ctype.h>
+#include<stdlib.h>
+#include<errno.h>
+struct termios initial;
+void exitraw() {
+	if(tcsetattr(STDIN_FILENO, TCSAFLUSH, &initial) == -1)
+		perror("tcsetattr");
+}
+void enterraw() {
+	if(tcgetattr(STDIN_FILENO, &initial) == -1)
+		perror("tcgetattr");
+	atexit(exitraw);
+	struct termios raw = initial;
+	raw.c_iflag &= ~(BRKINT | INPCK | ISTRIP);
+	raw.c_cflag |= (CS8);
+	raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
+	if(tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1)
+		perror("tcsetattr");
+}
+
+int main(int argc, char* argv[]) {
+	//enterraw();
+	while(1) {
+		char ch = '\0';
+		if(read(STDIN_FILENO, &ch, 1) == -1) {
+			perror("read");
+			exit(1);
+		}
+		if(iscntrl(ch)) {
+			printf("%d\n", ch);
+		}
+		else {
+			printf("%c\n", ch);
+		}
+	}
+	return 0;
+}
