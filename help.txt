@@ -1,0 +1,4 @@
+ncursesprogramminghowto.pdf
+	Usage of ncurses functions. 
+edlinuxeditor.blogspot.in
+	Used this to know controllng cursor in varoius  cases and some critical implementations of data structures  
